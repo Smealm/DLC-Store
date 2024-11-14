@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Remove target="_blank" from links dynamically
+// @name         Remove target="_blank" from links at intervals
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  Removes target="_blank" from all links to prevent opening in new tabs, including newly added ones
+// @description  Removes target="_blank" from all links to prevent opening in new tabs, at regular intervals
 // @author       You
 // @match        *://*/*
 // @grant        none
@@ -20,27 +20,9 @@
         });
     }
 
-    // Initial run to remove target="_blank" from existing links
+    // Run the removal function immediately on script load
     removeTargetBlank();
 
-    // Set up a MutationObserver to detect new <a> elements added to the DOM
-    const observer = new MutationObserver((mutationsList, observer) => {
-        for (let mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach(node => {
-                    if (node.tagName === 'A' && node.hasAttribute('target') && node.getAttribute('target') === '_blank') {
-                        node.removeAttribute('target');
-                        console.log(`Removed target="_blank" from new link: ${node.href}`);
-                    }
-                });
-            }
-        }
-    });
-
-    // Start observing the document for added child elements
-    observer.observe(document.body, {
-        childList: true,  // Look for added or removed child elements
-        subtree: true     // Observe all descendants of the body
-    });
-
+    // Set an interval to run the function every 0.5 seconds (500ms)
+    setInterval(removeTargetBlank, 500);  // 500ms = 0.5 seconds
 })();
